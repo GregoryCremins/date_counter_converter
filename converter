@@ -1,0 +1,54 @@
+import csv
+import time, datetime
+import re
+blankS = ''
+def timeToSecs(datTime):
+    return ((datTime.tm_year*31536000) + (datTime.tm_mon * 2628000) + (datTime.tm_mday * 86400) + (datTime.tm_hour * 3600) + (datTime.tm_min * 60) + datTime.tm_sec)
+
+target = []
+i = 0
+#get user input
+print "Enter filename to change dates:"
+filename = raw_input()
+print "Enter output filename:"
+outputFN = raw_input()
+#reader
+with open(filename, 'rb') as datFile:
+    reader = csv.reader(datFile, delimiter = '|')
+    for row in reader:
+        target.append(row)
+        #print row
+
+
+#modification
+    i = 1
+    while  i < len(target):
+        if len(target[i]) > 37 and target[i][37] is not blankS:
+            origOpenDate = time.strptime (target[i][37][:-7], '%Y-%m-%d-%H.%M.%S')
+            origOpenDate = timeToSecs(origOpenDate)
+            target[i][37] = origOpenDate
+            if (target[i][32] is not blankS):
+                openDate = time.strptime (target[i][33][:-7], '%Y-%m-%d-%H.%M.%S')
+                openDate = timeToSecs(openDate)
+                target[i][32] = openDate            
+            else:
+                openDate =0
+        
+        else:
+            origOpenDate =0
+             
+        i += 1
+        #writer
+i = 1
+with open(outputFN, 'wb') as csvfile:
+     datwriter = csv.writer(csvfile, delimiter='|')
+     for thing in target:
+        if len(thing) > 37:
+            datwriter.writerow(thing)
+        else:
+            datwriter.writerow('Not enough data')
+        i+= 1
+      #print 'did it'
+       
+
+        
